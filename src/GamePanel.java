@@ -1,5 +1,8 @@
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.HashSet;
 
 class GamePanel extends JPanel {
@@ -11,16 +14,22 @@ class GamePanel extends JPanel {
     private Tile pacman;
 
     public GamePanel() {
-        wallImage = new ImageIcon(getClass().getResource("/assets/wall.png")).getImage();
-        blueGhostImage = new ImageIcon(getClass().getResource("/assets/blueGhost.png")).getImage();
-        redGhostImage = new ImageIcon(getClass().getResource("/assets/redGhost.png")).getImage();
-        orangeGhostImage = new ImageIcon(getClass().getResource("/assets/orangeGhost.png")).getImage();
-        pinkGhostImage = new ImageIcon(getClass().getResource("/assets/pinkGhost.png")).getImage();
+        try {
+            wallImage = ImageIO.read(new File("assets/blueGhost.png"));
+            blueGhostImage = ImageIO.read(new File("assets/blueGhost.png"));
+            redGhostImage = ImageIO.read(new File("assets/redGhost.png"));
+            orangeGhostImage = ImageIO.read(new File("assets/orangeGhost.png"));
+            pinkGhostImage = ImageIO.read(new File("assets/pinkGhost.png"));
 
-        pacManUpImage = new ImageIcon(getClass().getResource("/assets/pacmanUp.png")).getImage();
-        pacManDownImage = new ImageIcon(getClass().getResource("/assets/pacmanDown.png")).getImage();
-        pacManLeftImage = new ImageIcon(getClass().getResource("/assets/pacmanLeft.png")).getImage();
-        pacManRightImage = new ImageIcon(getClass().getResource("/assets/pacmanRight.png")).getImage();
+            pacManUpImage = ImageIO.read(new File("assets/pacmanUp.png"));
+            pacManDownImage = ImageIO.read(new File("assets/pacmanDown.png"));
+            pacManLeftImage = ImageIO.read(new File("assets/pacmanLeft.png"));
+            pacManRightImage = ImageIO.read(new File("assets/pacmanRight.png"));
+        }
+        catch (IOException e) {
+            System.err.println("Error loading images");
+        }
+
 
         loadMap();
         setBackground(Color.BLACK);
