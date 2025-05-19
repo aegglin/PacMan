@@ -28,8 +28,4 @@ public class GameWindow extends JFrame{
     }
 }
 
-class GamePanel extends JPanel {
-    GamePanel() {
-        setBackground(Color.BLACK);
-    }
-}
+
