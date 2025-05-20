@@ -11,7 +11,7 @@ class GamePanel extends JPanel {
             pacManUpImage, pacManDownImage, pacManLeftImage, pacManRightImage;
 
     private HashSet<Tile> walls, foods, ghosts;
-    private Tile pacman;
+    private PacMan pacman;
 
     public GamePanel() {
         try {
@@ -67,7 +67,7 @@ class GamePanel extends JPanel {
                     Tile ghost = new Tile(redGhostImage, x, y, GameWindow.TILE_SIZE, GameWindow.TILE_SIZE);
                 }
                 else if (tileMapChar == 'P') {
-                    pacman = new Tile(pacManRightImage, x, y, GameWindow.TILE_SIZE, GameWindow.TILE_SIZE);
+                    pacman = new PacMan(pacManRightImage, x, y, GameWindow.TILE_SIZE, GameWindow.TILE_SIZE);
                 }
                 else if (tileMapChar == ' ') {
                     //offset is 14
