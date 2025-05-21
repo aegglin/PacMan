@@ -8,7 +8,7 @@ public class GameWindow extends JFrame{
     public static final int COLUMN_COUNT = 19;
     public static final int TILE_SIZE = 32;
     public static final int BOARD_WIDTH = COLUMN_COUNT * TILE_SIZE;
-    public static final int BOARD_HEIGHT = ROW_COUNT * TILE_SIZE;
+    public static final int BOARD_HEIGHT = (ROW_COUNT + 1) * TILE_SIZE;
 
     private GamePanel panel;
 
@@ -19,7 +19,6 @@ public class GameWindow extends JFrame{
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setPreferredSize(new Dimension(BOARD_WIDTH, BOARD_HEIGHT));
         setSize(BOARD_WIDTH, BOARD_HEIGHT);
-
         pack();
         panel = new GamePanel();
         add(panel);

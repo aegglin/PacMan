@@ -15,7 +15,7 @@ class GamePanel extends JPanel {
 
     public GamePanel() {
         try {
-            wallImage = ImageIO.read(new File("assets/blueGhost.png"));
+            wallImage = ImageIO.read(new File("assets/wall.png"));
             blueGhostImage = ImageIO.read(new File("assets/blueGhost.png"));
             redGhostImage = ImageIO.read(new File("assets/redGhost.png"));
             orangeGhostImage = ImageIO.read(new File("assets/orangeGhost.png"));
@@ -29,10 +29,30 @@ class GamePanel extends JPanel {
         catch (IOException e) {
             System.err.println("Error loading images");
         }
-
-
         loadMap();
         setBackground(Color.BLACK);
+    }
+
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g); //Call JPanel's paintComponent
+        draw(g);
+    }
+
+    public void draw(Graphics g) {
+        g.drawImage(pacman.image, pacman.x, pacman.y, pacman.width, pacman.height, null);
+
+        for (Tile ghost: ghosts) {
+            g.drawImage(ghost.image, ghost.x, ghost.y, ghost.width, ghost.height, null);
+        }
+
+        for (Tile wall: walls) {
+            g.drawImage(wall.image, wall.x, wall.y, wall.width, wall.height, null);
+        }
+
+        g.setColor(Color.WHITE);
+        for (Tile food: foods) {
+            g.fillRect(food.x, food.y, food.width, food.height);
+        }
     }
 
     public void loadMap() {
@@ -56,15 +76,19 @@ class GamePanel extends JPanel {
                 }
                 else if (tileMapChar == 'b') {
                     Tile ghost = new Tile(blueGhostImage, x, y, GameWindow.TILE_SIZE, GameWindow.TILE_SIZE);
+                    ghosts.add(ghost);
                 }
                 else if (tileMapChar == 'o') {
                     Tile ghost = new Tile(orangeGhostImage, x, y, GameWindow.TILE_SIZE, GameWindow.TILE_SIZE);
+                    ghosts.add(ghost);
                 }
                 else if (tileMapChar == 'p') {
                     Tile ghost = new Tile(pinkGhostImage, x, y, GameWindow.TILE_SIZE, GameWindow.TILE_SIZE);
+                    ghosts.add(ghost);
                 }
                 else if (tileMapChar == 'r') {
                     Tile ghost = new Tile(redGhostImage, x, y, GameWindow.TILE_SIZE, GameWindow.TILE_SIZE);
+                    ghosts.add(ghost);
                 }
                 else if (tileMapChar == 'P') {
                     pacman = new PacMan(pacManRightImage, x, y, GameWindow.TILE_SIZE, GameWindow.TILE_SIZE);
