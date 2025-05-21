@@ -21,6 +21,7 @@ public class GameWindow extends JFrame{
         setSize(BOARD_WIDTH, BOARD_HEIGHT);
         pack();
         panel = new GamePanel();
+        panel.requestFocus();
         add(panel);
 
         setVisible(true);
