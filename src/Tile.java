@@ -21,7 +21,7 @@ public class Tile {
         this.panel = panel;
     }
 
-    void updateDirection(char direction) {
+    public void updateDirection(char direction) {
         char prevDirection = this.direction;
         this.direction = direction;
         updateVelocity();
@@ -39,7 +39,12 @@ public class Tile {
         }
     }
 
-    void updateVelocity() {
+    public void reset() {
+        this.x = this.startingX;
+        this.y = this.startingY;
+    }
+
+    public void updateVelocity() {
         if (this.direction == 'U') {
             this.velocityX = 0;
             this.velocityY = -GameWindow.TILE_SIZE / 4;

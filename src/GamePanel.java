@@ -17,10 +17,12 @@ class GamePanel extends JPanel implements ActionListener, KeyListener {
 
     public HashSet<Tile> walls, foods, ghosts, portals;
     private PacMan pacman;
-    public char[] directions = {'U', 'D', 'L', 'R'}; //up dodwn left right
-    Random random = new Random();
+    public char[] directions = {'U', 'D', 'L', 'R'}; //up down left right
+    private Random random;
+    private int score, lives;
+    private boolean gameOver;
+    private Timer gameLoop;
 
-    Timer gameLoop;
     public GamePanel() {
         try {
             wallImage = ImageIO.read(new File("assets/wall.png"));
@@ -39,6 +41,8 @@ class GamePanel extends JPanel implements ActionListener, KeyListener {
         }
         loadMap();
 
+        random = new Random();
+
         for (Tile ghost: ghosts) {
             char newDirection = directions[random.nextInt(4)];
             ghost.updateDirection(newDirection);
@@ -47,6 +51,10 @@ class GamePanel extends JPanel implements ActionListener, KeyListener {
         setBackground(Color.BLACK);
         addKeyListener(this);
         setFocusable(true);
+
+        score = 0;
+        lives = 3;
+        gameOver = false;
 
         gameLoop = new Timer(50, this); //second parameter is an action listener, call it every 50 ms
         gameLoop.start();
@@ -72,6 +80,14 @@ class GamePanel extends JPanel implements ActionListener, KeyListener {
         g.setColor(Color.WHITE);
         for (Tile food: foods) {
             g.fillRect(food.x, food.y, food.width, food.height);
+        }
+
+        g.setFont(new Font("Arial", Font.PLAIN, 18));
+        if (gameOver) {
+            g.drawString("Game Over: " + String.valueOf(score), GameWindow.TILE_SIZE / 2, GameWindow.TILE_SIZE / 2);
+        }
+        else {
+            g.drawString("x" + String.valueOf(lives) + " Score: " + String.valueOf(score), GameWindow.TILE_SIZE / 2, GameWindow.TILE_SIZE / 2);
         }
     }
 
@@ -153,6 +169,19 @@ class GamePanel extends JPanel implements ActionListener, KeyListener {
         }
 
         for (Tile ghost: ghosts) {
+            if (collision(ghost, pacman)) {
+                lives -= 1;
+                if (lives == 0) {
+                    gameOver = true;
+                    return;
+                }
+                resetPositions();
+            }
+            if (ghost.y == GameWindow.TILE_SIZE * 9 && ghost.direction != 'U' && ghost.direction != 'D') {
+                char newDirection = random.nextInt(2) == 0 ? 'U' : 'D';
+                ghost.updateDirection(newDirection);
+            }
+
             ghost.x += ghost.velocityX;
             ghost.y += ghost.velocityY;
 
@@ -167,18 +196,28 @@ class GamePanel extends JPanel implements ActionListener, KeyListener {
             for (Tile portal: portals) {
                 if (collision(ghost, portal)) {
                     if (portal.x == 0 && ghost.direction == 'L') {
-                        System.out.println("portal.x = 0");
                         ghost.x = GameWindow.BOARD_WIDTH - GameWindow.TILE_SIZE;
                         char newDirection = directions[random.nextInt(4)];
                         ghost.updateDirection(newDirection);
                     }
-                    if (portal.x == GameWindow.BOARD_WIDTH - GameWindow.TILE_SIZE && ghost.direction == 'R'){
-                        System.out.println("Right portal");
+                    else if (portal.x == GameWindow.BOARD_WIDTH - GameWindow.TILE_SIZE && ghost.direction == 'R'){
                         ghost.x = 0;
                         char newDirection = directions[random.nextInt(4)];
                         ghost.updateDirection(newDirection);
                     }
                 }
+            }
+            Tile foodEaten = null;
+            for (Tile food: foods) {
+                if (collision(pacman, food)) {
+                    foodEaten = food;
+                    score += 10;
+                }
+            }
+            foods.remove(foodEaten);
+            if (foods.isEmpty()) {
+                loadMap();
+                resetPositions();
             }
         }
     }
@@ -191,10 +230,24 @@ class GamePanel extends JPanel implements ActionListener, KeyListener {
                 a.y + a.height > b.y;
     }
 
+    public void resetPositions() {
+        pacman.reset();
+        pacman.velocityX = 0;
+        pacman.velocityY = 0;
+        for (Tile ghost: ghosts) {
+            ghost.reset();
+            char newDirection = directions[random.nextInt(4)];
+            ghost.updateDirection(newDirection);
+        }
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         move();
         repaint();
+        if (gameOver) {
+            gameLoop.stop();
+        }
     }
 
     @Override
@@ -210,6 +263,16 @@ class GamePanel extends JPanel implements ActionListener, KeyListener {
 
     @Override
     public void keyReleased(KeyEvent e) {
+
+        if (gameOver) {
+            loadMap();
+            resetPositions();
+            lives = 3;
+            score = 0;
+            gameOver = false;
+            gameLoop.start();
+        }
+
         if (e.getKeyCode() == KeyEvent.VK_UP) {
             pacman.updateDirection('U');
         }
